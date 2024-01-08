@@ -4,20 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.CustomerBO;
 import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.tm.CustomerTm;
-import lk.nimsara.carRental.model.CustomerModel;
 import lk.nimsara.carRental.util.Navigation;
 import lk.nimsara.carRental.util.Utils;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -76,6 +73,10 @@ public class CustomerFormController {
     private TextField txtUserId;
 
 
+
+    CustomerBO customerBO =(CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.CUSTOMER);
+
+
     public void initialize() {
         setCellValueFactory();
         loadAllCustomers();
@@ -92,12 +93,12 @@ public class CustomerFormController {
     }
 
     private void loadAllCustomers() {
-        var model = new CustomerModel();
+
 
         ObservableList<CustomerTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<CustomerDto> dtoList = model.getAllCustomers();
+            List<CustomerDto> dtoList = customerBO.getAllCustomers();
 
             for (CustomerDto dto : dtoList) {
                 obList.add(
@@ -176,9 +177,8 @@ public class CustomerFormController {
 
         var dto = new CustomerDto(id, name, address, Email, Tel, U_id);
 
-        var model = new CustomerModel();
         try {
-            boolean isSaved = model.saveCustomer(dto);
+            boolean isSaved = customerBO.saveCustomer(dto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "customer saved!").show();
                 clearFields();
@@ -204,9 +204,9 @@ public class CustomerFormController {
 
             String Customer_id = txtId.getText();
 
-            var customerModel = new CustomerModel();
+
             try {
-                boolean isDeleted = customerModel.deleteCustomer(Customer_id);
+                boolean isDeleted = customerBO.deleteCustomer(Customer_id);
 
                 if(isDeleted) {
                     tblCustomer.refresh();
@@ -232,9 +232,9 @@ public class CustomerFormController {
 
             var dto = new CustomerDto(id, name, address, Email,Tel,U_id);
 
-            var model = new CustomerModel();
+
             try {
-                boolean isUpdated = model.updateCustomer(dto);
+                boolean isUpdated = customerBO.updateCustomer(dto);
                 System.out.println(isUpdated);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Customer Updated!").show();
@@ -329,10 +329,9 @@ public class CustomerFormController {
     public void btnSearchOnAction(ActionEvent actionEvent) {
         String id = txtId.getText();
 
-        CustomerModel customerModel = new CustomerModel();
 
         try {
-            CustomerDto customerDto = customerModel.searchCustomer(id);
+            CustomerDto customerDto = customerBO.searchCustomer(id);
 
 
             if (customerDto != null) {

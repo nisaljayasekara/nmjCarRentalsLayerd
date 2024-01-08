@@ -16,7 +16,6 @@ import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.EmployeeDto;
 import lk.nimsara.carRental.dto.tm.CustomerTm;
 import lk.nimsara.carRental.dto.tm.EmployeeTm;
-import lk.nimsara.carRental.model.CustomerModel;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;

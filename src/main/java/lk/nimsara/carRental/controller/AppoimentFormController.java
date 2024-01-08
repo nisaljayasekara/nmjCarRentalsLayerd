@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.CustomerBO;
 import lk.nimsara.carRental.db.DbConnection;
 import lk.nimsara.carRental.dto.AppoimentDto;
 import lk.nimsara.carRental.dto.CarDto;
@@ -115,6 +117,9 @@ public class AppoimentFormController {
     private AppoimentTransAction transAction =new AppoimentTransAction();
     private RepairTransAction transActions =new RepairTransAction();
 
+
+    CustomerBO customerBO =(CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.CUSTOMER);
+
     public void initialize() {
         setCellValueFactory();
         loadAllAppoiment();
@@ -143,7 +148,7 @@ public class AppoimentFormController {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<CustomerDto> custList = CustomerModel.loadAllCustomers();
+            List<CustomerDto> custList = customerBO.getAllCustomers();
             for (CustomerDto customerDto:custList){
                 obList.add(customerDto.getId());
             }
@@ -331,8 +336,7 @@ public class AppoimentFormController {
     @FXML
     void cmbCustOnAction(ActionEvent event) throws SQLException {
        String id = (String) cmbCustId.getValue();
-        CustomerDto customerDto =CustomerModel.searchCustomer(id);
-
+        CustomerDto customerDto = customerBO.searchCustomer(id);
 
     }
     @FXML

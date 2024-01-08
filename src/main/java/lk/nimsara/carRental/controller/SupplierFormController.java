@@ -12,7 +12,6 @@ import lk.nimsara.carRental.db.DbConnection;
 import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.SupplierDto;
 import lk.nimsara.carRental.dto.tm.SupplierTm;
-import lk.nimsara.carRental.model.CustomerModel;
 import lk.nimsara.carRental.model.SupplierModel;
 import javafx.scene.control.TableView;
 import lk.nimsara.carRental.util.Utils;

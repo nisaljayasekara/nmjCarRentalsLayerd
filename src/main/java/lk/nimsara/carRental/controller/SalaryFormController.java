@@ -11,7 +11,6 @@ import lk.nimsara.carRental.db.DbConnection;
 import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.SalaryDto;
 import lk.nimsara.carRental.dto.tm.SalaryTm;
-import lk.nimsara.carRental.model.CustomerModel;
 import lk.nimsara.carRental.model.SalaryModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;

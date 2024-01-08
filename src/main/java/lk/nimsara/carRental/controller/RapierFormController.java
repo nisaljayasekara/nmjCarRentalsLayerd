@@ -10,7 +10,6 @@ import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.RapierDto;
 import lk.nimsara.carRental.dto.tm.CustomerTm;
 import lk.nimsara.carRental.dto.tm.RapierTm;
-import lk.nimsara.carRental.model.CustomerModel;
 import lk.nimsara.carRental.model.RapierModel;
 import lk.nimsara.carRental.util.Utils;
 import javafx.scene.input.MouseEvent;
