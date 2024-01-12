@@ -6,12 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import lk.nimsara.carRental.dto.CustomerDto;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.RepairBO;
 import lk.nimsara.carRental.dto.RapierDto;
-import lk.nimsara.carRental.dto.tm.CustomerTm;
 import lk.nimsara.carRental.dto.tm.RapierTm;
-import lk.nimsara.carRental.model.RapierModel;
-import lk.nimsara.carRental.util.Utils;
 import javafx.scene.input.MouseEvent;
 
 import java.sql.SQLException;
@@ -59,6 +57,8 @@ public class RapierFormController {
     @FXML
     private TextField txtRapierdesc;
 
+    RepairBO repairBO =(RepairBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.REPAIR);
+
     public void initialize() {
         setCellValueFactory();
         loadAllRapiers();
@@ -74,12 +74,12 @@ public class RapierFormController {
         colCarId.setCellValueFactory(new  PropertyValueFactory<>("Car_id"));
     }
     private void loadAllRapiers() {
-        var model = new RapierModel();
+
 
         ObservableList<RapierTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<RapierDto> dtoList = model.loadAllRapiers();
+            List<RapierDto> dtoList = repairBO.getAllRepair();
 
             for(RapierDto dto : dtoList) {
                 obList.add(
@@ -116,9 +116,9 @@ public class RapierFormController {
     void btnDeleteOnAction(ActionEvent event) {
         String Rapier_id = txtRapierId.getText();
 
-        var rapierModel = new RapierModel();
+
         try {
-            boolean isDeleted = rapierModel.deleteRapier(Rapier_id);
+            boolean isDeleted = repairBO.deleteRepair(Rapier_id);
 
             if(isDeleted) {
                 tblRapier.refresh();
@@ -142,12 +142,13 @@ public class RapierFormController {
 
         var dto = new RapierDto(Rapier_id, Rapier_date, Rapier_desc,Rapier_returnDate,Rapier_price,Car_id);
 
-        var model = new RapierModel();
+
         try {
-            boolean isSaved = model.saveRapier(dto);
+            boolean isSaved = repairBO.saveRepair(dto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Rapier  saved!").show();
                // clearFields();
+                 loadAllRapiers();
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -168,12 +169,13 @@ public class RapierFormController {
 
         var dto = new RapierDto(Rapier_id, Rapier_date, Rapier_desc, Rapier_returnDate,Rapier_price,Car_id);
 
-        var model = new RapierModel();
+
         try {
-            boolean isUpdated = model.updateRapier(dto);
+            boolean isUpdated = repairBO.updateRepair(dto);
             System.out.println(isUpdated);
             if(isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "rapier updated!").show();
+                loadAllRapiers();
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();

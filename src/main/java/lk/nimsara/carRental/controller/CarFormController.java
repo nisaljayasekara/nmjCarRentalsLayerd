@@ -9,11 +9,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.CarBO;
+import lk.nimsara.carRental.bo.custom.CustomerBO;
 import lk.nimsara.carRental.dto.CarDto;
 import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.tm.CarTm;
 import lk.nimsara.carRental.dto.tm.CustomerTm;
-import lk.nimsara.carRental.model.CarModel;
+
 import javafx.scene.input.MouseEvent;
 
 import java.sql.SQLException;
@@ -50,6 +53,7 @@ public class CarFormController {
     @FXML
     private TextField txtId;
 
+    CarBO carBO =(CarBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.CAR);
 
     public void initialize() {
         setCellValueFactory();
@@ -67,12 +71,11 @@ public class CarFormController {
     }
 
     private void loadAllCars() {
-        var model = new CarModel();
 
         ObservableList<CarTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<CarDto> dtoList = CarModel.getAllCars();
+            List<CarDto> dtoList = carBO.getAllCars();
 
             for (CarDto dto : dtoList) {
                 obList.add(
@@ -105,10 +108,10 @@ public class CarFormController {
 
         String id = txtId.getText();
 
-        CarModel carModel = new CarModel();
+
 
         try {
-            boolean isisDeletedVehicle = carModel.deleteCar(id);
+            boolean isisDeletedVehicle = carBO.deleteCar(id);
 
             if (isisDeletedVehicle) {
                 tblCar.refresh();
@@ -156,10 +159,10 @@ public class CarFormController {
 
         CarDto carDto = new CarDto(id, name, Availability, price);
 
-        CarModel carModel = new CarModel();
+
 
         try {
-            boolean isSaved = carModel.saveCar(carDto);
+            boolean isSaved = carBO.saveCar(carDto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Car saved!").show();
                 clearFields();
@@ -182,10 +185,10 @@ public class CarFormController {
 
         CarDto CarDto =new CarDto(id,name,Availability,price);
 
-        CarModel CarModel =new CarModel();
+
 
         try {
-            boolean isUpdated =CarModel.updateCar(CarDto);
+            boolean isUpdated =carBO.updateCar(CarDto);
 
 
             if (isUpdated){
@@ -209,10 +212,10 @@ public class CarFormController {
     void btnSearchOnAction(ActionEvent event) {
         String id  = txtId.getText();
 
-        CarModel carModel =new CarModel();
+
 
         try {
-            CarDto carDto = carModel.searchCar(id);
+            CarDto carDto = carBO.searchCar(id);
 
             if (carDto !=null){
                 fillFields(carDto);

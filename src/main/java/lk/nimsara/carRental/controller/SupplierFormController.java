@@ -8,18 +8,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import lk.nimsara.carRental.db.DbConnection;
-import lk.nimsara.carRental.dto.CustomerDto;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.SupplierBO;
 import lk.nimsara.carRental.dto.SupplierDto;
 import lk.nimsara.carRental.dto.tm.SupplierTm;
-import lk.nimsara.carRental.model.SupplierModel;
 import javafx.scene.control.TableView;
 import lk.nimsara.carRental.util.Utils;
 import javafx.scene.input.MouseEvent;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -56,6 +52,8 @@ public class SupplierFormController {
     @FXML
     private TextField txtName;
 
+    SupplierBO supplierBO =(SupplierBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.SUPPLIER);
+
     public void initialize() {
         setCellValueFactory();
         loadAllSuppliers();
@@ -73,12 +71,11 @@ public class SupplierFormController {
     }
 
     private void loadAllSuppliers() {
-        var model = new SupplierModel();
 
         ObservableList<SupplierTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<SupplierDto> dtoList = model.getAllSuppliers();
+            List<SupplierDto> dtoList = supplierBO.getAllSuppliers();
 
             for (SupplierDto dto : dtoList) {
                 obList.add(
@@ -121,10 +118,9 @@ public class SupplierFormController {
     void DeletebtnOnAction(ActionEvent event) {
         String supId = txtId.getText();
 
-        SupplierModel supplierModel = new SupplierModel();
 
         try {
-            boolean isDeleted = supplierModel.deleteSupplier(supId);
+            boolean isDeleted = supplierBO.deleteSupplier(supId);
             if (isDeleted) {
                 tblSupplier.refresh();
                 new Alert(Alert.AlertType.CONFIRMATION, "supplier deleted!").show();
@@ -148,10 +144,10 @@ public class SupplierFormController {
 
         SupplierDto supplierDto = new SupplierDto(supId, supName, supEmail, tel, userId);
 
-        SupplierModel supplierModel = new SupplierModel();
+
 
         try {
-            boolean isSaved = supplierModel.saveSupplier(supplierDto);
+            boolean isSaved = supplierBO.saveSupplier(supplierDto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "supplier saved!").show();
                 loadAllSuppliers();
@@ -180,9 +176,9 @@ public class SupplierFormController {
 
         var dto = new SupplierDto(id, name, Email,Tel,U_Id);
 
-        var model = new SupplierModel();
+
         try {
-            boolean isUpdated = model.updateSupplier(dto);
+            boolean isUpdated = supplierBO.updateSupplier(dto);
             System.out.println(isUpdated);
             if(isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Supplier updated!").show();

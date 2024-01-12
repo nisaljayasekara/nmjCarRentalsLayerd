@@ -10,6 +10,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.AppoimentBO;
+import lk.nimsara.carRental.bo.custom.AppoimentDetailBO;
+import lk.nimsara.carRental.bo.custom.CarBO;
 import lk.nimsara.carRental.bo.custom.CustomerBO;
 import lk.nimsara.carRental.db.DbConnection;
 import lk.nimsara.carRental.dto.AppoimentDto;
@@ -114,9 +117,14 @@ public class AppoimentFormController {
     @FXML
     private TextField txtTotalPrice;
 
-    private AppoimentTransAction transAction =new AppoimentTransAction();
-    private RepairTransAction transActions =new RepairTransAction();
 
+
+    AppoimentDetailBO appoimentDetailBO = (AppoimentDetailBO)  BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOIMENT_DETAIL);
+
+
+    CarBO carBO =(CarBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.CAR);
+
+    AppoimentBO appoimentBO =(AppoimentBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.APPOIMENT);
 
     CustomerBO customerBO =(CustomerBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.CUSTOMER);
 
@@ -134,7 +142,7 @@ public class AppoimentFormController {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<CarDto> empList = CarModel.loadAllCars();
+            List<CarDto> empList = carBO.getAllCars();
             for (CarDto carDto:empList){
                 obList.add(carDto.getId());
             }
@@ -174,12 +182,12 @@ public class AppoimentFormController {
         colCustomerId.setCellValueFactory(new PropertyValueFactory<>("Customer_id"));
     }
     private void loadAllAppoiment() {
-        var model = new AppoimentModel();
+
 
         ObservableList<AppoimentTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<AppoimentDto> dtoList = model.getAllAppoiment();
+            List<AppoimentDto> dtoList = appoimentBO.getAllAppoiment();
 
             for(AppoimentDto dto : dtoList) {
                 obList.add(
@@ -225,10 +233,10 @@ public class AppoimentFormController {
     void btnDeleteOnAction(ActionEvent event) {
         String id =lblAppoimentId.getText();
 
-        AppoimentModel appoimentModel =new AppoimentModel();
+
 
         try {
-            boolean isDeleted =appoimentModel.deleteAppoiment(id);
+            boolean isDeleted =appoimentBO.deleteAppoiment(id);
 
             if (isDeleted){
                 tblAppoiment.refresh();
@@ -258,9 +266,9 @@ public class AppoimentFormController {
 
         var dto = new AppoimentDto(id,date,time,Returndate,Appoiment_returnTime,Customer_id,Car_id,Car_name,Car_price,payment);
 
-        var model = new AppoimentModel();
+
         try {
-            boolean isSaved=transAction.saveAppoiment(dto,Car_id);
+            boolean isSaved=appoimentDetailBO.saveAppoiment(dto,Car_id);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "appoiment saved!").show();
@@ -288,10 +296,10 @@ public class AppoimentFormController {
 
         AppoimentDto appoimentDto = new AppoimentDto(id,date,time,Returndate,Customer_id,Appoiment_returnTime,Car_id,Car_name,Car_price,Payment);
 
-        AppoimentModel appoimentModelModel =new AppoimentModel();
+
 
         try {
-            boolean isUpdated = appoimentModelModel.updateAppoiment(appoimentDto);
+            boolean isUpdated = appoimentBO.updateAppoiment(appoimentDto);
             if (isUpdated){
                 new Alert(Alert.AlertType.CONFIRMATION, "Appoiment updated!").show();
                 loadAllAppoiment();
@@ -327,7 +335,7 @@ public class AppoimentFormController {
       //  System.out.println("hello");
 
         String id =  cmbCar_id.getValue();
-        CarDto carDto =CarModel.searchCar(id);
+        CarDto carDto =carBO.searchCar(id);
         lblCarName.setText(carDto.getName());
         lblCarPrice.setText(carDto.getPrice());
 

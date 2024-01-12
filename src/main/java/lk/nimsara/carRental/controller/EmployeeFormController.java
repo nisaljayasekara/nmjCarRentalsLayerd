@@ -4,21 +4,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lk.nimsara.carRental.dto.CustomerDto;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.EmployeeBO;
 import lk.nimsara.carRental.dto.EmployeeDto;
-import lk.nimsara.carRental.dto.tm.CustomerTm;
 import lk.nimsara.carRental.dto.tm.EmployeeTm;
 import javafx.scene.input.MouseEvent;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -64,6 +61,7 @@ public class EmployeeFormController {
     private TextField txtcontactnum;
 
 
+    EmployeeBO employeeBo =(EmployeeBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.EMPLOYEE);
 
 
     public void initialize() {
@@ -83,12 +81,12 @@ public class EmployeeFormController {
 
 
     private void loadAllEmployees() {
-        var model = new lk.nimsara.carrental.model.EmployeeModel();
+
 
         ObservableList<EmployeeTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<EmployeeDto> dtoList = model.getAllEmployee();
+            List<EmployeeDto> dtoList = employeeBo.getAllEmployee();
 
             for(EmployeeDto dto : dtoList) {
                 obList.add(
@@ -116,11 +114,10 @@ public class EmployeeFormController {
     void btnEmployeeDeleteOnAction(ActionEvent event) {
         String id =txtEmployee_id.getText();
 
-        lk.nimsara.carrental.model.EmployeeModel employeeModel =new lk.nimsara.carrental.model.EmployeeModel();
-
         try {
-            boolean isDeleted= employeeModel.deleteEmployee(id);
+            boolean isDeleted= employeeBo.deleteEmployee(id);
             if (isDeleted){
+                tblEmployee.refresh();
                 new Alert(Alert.AlertType.CONFIRMATION, "employee deleted!").show();
                 loadAllEmployees();
             }
@@ -178,9 +175,8 @@ public class EmployeeFormController {
 
         var dto = new EmployeeDto(id, name, address, job,contact);
 
-        var model = new lk.nimsara.carrental.model.EmployeeModel();
         try {
-            boolean isSaved = model.saveEmployee(dto);
+            boolean isSaved = employeeBo.saveEmployee(dto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Employee Saved!").show();
                 loadAllEmployees();
@@ -208,7 +204,7 @@ public class EmployeeFormController {
 
         EmployeeDto employeeDto = new EmployeeDto(id,name,address,job,contact);
 
-        lk.nimsara.carrental.model.EmployeeModel employeeModel =new lk.nimsara.carrental.model.EmployeeModel();
+
 
         try {
             boolean isUpdated =employeeModel.updateEmployee(employeeDto);
@@ -232,9 +228,9 @@ public class EmployeeFormController {
 
             var dto = new EmployeeDto(id, name, address, job,contact);
 
-            var model = new lk.nimsara.carrental.model.EmployeeModel();
+
             try {
-                boolean isUpdated = model.updateEmployee(dto);
+                boolean isUpdated = employeeBo.updateEmployee(dto);
                 System.out.println(isUpdated);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Employee Updated!").show();

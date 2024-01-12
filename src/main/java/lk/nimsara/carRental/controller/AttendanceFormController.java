@@ -7,10 +7,13 @@ import javafx.scene.control.ComboBox;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.AttendanceBO;
+import lk.nimsara.carRental.bo.custom.EmployeeBO;
+import lk.nimsara.carRental.dao.custom.impl.EmployeeDAOImpl;
 import lk.nimsara.carRental.dto.AttendanceDto;
 import lk.nimsara.carRental.dto.EmployeeDto;
 import lk.nimsara.carRental.dto.tm.AttendanceTm;
-import lk.nimsara.carRental.model.AttendanceModel;
 import javafx.scene.input.MouseEvent;
 
 import java.sql.SQLException;
@@ -50,9 +53,9 @@ public class AttendanceFormController {
     private TextField txtTime;
 
 
-    private final lk.nimsara.carrental.model.EmployeeModel employeeModel = new lk.nimsara.carrental.model.EmployeeModel();
+    AttendanceBO attendanceBO =(AttendanceBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.ATTENDANCE);
+    EmployeeBO employeeBo =(EmployeeBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.EMPLOYEE);
 
-    private final AttendanceModel attendanceModel = new AttendanceModel();
 
     public void initialize() {
         setCellValueFactory();
@@ -62,10 +65,12 @@ public class AttendanceFormController {
     }
 
     private void loadEmployeeIds() {
+
+
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<EmployeeDto> empList = employeeModel.loadAllEmployees();
+            List<EmployeeDto> empList = employeeBo.getAllEmployee();
             for (EmployeeDto employeeDto:empList){
                 obList.add(employeeDto.getEmployee_id());
             }
@@ -83,11 +88,11 @@ public class AttendanceFormController {
     }
 
     private void loadAllAttendance() {
-        AttendanceModel attendanceModel1 = new AttendanceModel();
+
         ObservableList<AttendanceTm> oblist =FXCollections.observableArrayList();
 
         try {
-            List<AttendanceDto> attendanceList =attendanceModel1.getAllAttendance();
+            List<AttendanceDto> attendanceList =attendanceBO.getAllAttendance();
 
             for (AttendanceDto attendanceDto:attendanceList){
                 AttendanceTm attendanceTm =new AttendanceTm(attendanceDto.getAttendanceId(),
@@ -120,10 +125,10 @@ public class AttendanceFormController {
     void btnEmployeeDeleteOnAction(ActionEvent event) {
         String id =txtAttendance_id.getText();
 
-        AttendanceModel attendanceModel1 =new AttendanceModel();
+
 
         try {
-            boolean isDeleted =attendanceModel1.deleteAttendance(id);
+            boolean isDeleted =attendanceBO.deleteAttendance(id);
 
             if (isDeleted){
                 tblAttendance.refresh();
@@ -146,10 +151,10 @@ public class AttendanceFormController {
 
         AttendanceDto attendanceDto =new AttendanceDto(id,attendanceDate,time,empID);
 
-        AttendanceModel attendanceModel1 =new AttendanceModel();
+
 
         try {
-            boolean isSaved =attendanceModel1.saveAttendance(attendanceDto);
+            boolean isSaved =attendanceBO.saveAttendance(attendanceDto);
             if (isSaved){
                 new Alert(Alert.AlertType.CONFIRMATION, "attendance saved!").show();
                 loadAllAttendance();
@@ -163,7 +168,7 @@ public class AttendanceFormController {
 
     @FXML
     void btnEmployeeUpdateOnAction(ActionEvent event) {
-       /* String id =txtAttendance_id.getText();
+     /*  String id =txtAttendance_id.getText();
         String date = String.valueOf(dateSelect.getValue());
         String time =txtEmployee_address.getText();
         String Employee_id =txtEmployee_job_category.getText();
@@ -171,7 +176,7 @@ public class AttendanceFormController {
 
         AttendanceDto attendanceDto = new AttendanceDto(id,date,time,Employee_id);
 
-        AttendanceModel attendancModel =new AttendanceModel();
+
 
         try {
             boolean isUpdated =attendancModel.updateAttendance(attendanceDto);
@@ -181,16 +186,16 @@ public class AttendanceFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-        }
+        }*/
     }
-*/
-        }
+
+
     @FXML
     void cmbEmployeeOnAction(ActionEvent event) throws SQLException {
 
 
         String id =cmbEmployee_id.getValue();
-        EmployeeDto employeeDto =employeeModel.searchEmployee(id);
+        EmployeeDto employeeDto =employeeBo.searchEmployee(id);
 
     }
     @FXML

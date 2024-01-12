@@ -7,11 +7,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.EmployeeBO;
+import lk.nimsara.carRental.bo.custom.SalaryBO;
 import lk.nimsara.carRental.db.DbConnection;
 import lk.nimsara.carRental.dto.CustomerDto;
 import lk.nimsara.carRental.dto.SalaryDto;
 import lk.nimsara.carRental.dto.tm.SalaryTm;
-import lk.nimsara.carRental.model.SalaryModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JRDesignQuery;
@@ -61,6 +63,8 @@ public class SalaryFormController {
     private TextField txtSalaryId;
 
 
+    SalaryBO salaryBO =(SalaryBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.SALARY);
+
     public void initialize() {
         setCellValueFactory();
         loadAllSalaryes();
@@ -76,12 +80,12 @@ public class SalaryFormController {
     }
 
     private void loadAllSalaryes() {
-        var model = new SalaryModel();
+
 
         ObservableList<SalaryTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<SalaryDto> dtoList = model.getAllSalaryes();
+            List<SalaryDto> dtoList = salaryBO.getAllSalary();
 
             for (SalaryDto dto : dtoList) {
                 obList.add(
@@ -118,9 +122,9 @@ public class SalaryFormController {
 
         var dto = new SalaryDto(id, date, Amount, EmpId);
 
-        var model = new SalaryModel();
+
         try {
-            boolean isUpdated = model.updateSalary(dto);
+            boolean isUpdated = salaryBO.updateSalary(dto);
             System.out.println(isUpdated);
             if(isUpdated) {
                 new Alert(Alert.AlertType.CONFIRMATION, "Salary updated!").show();
@@ -143,9 +147,9 @@ public class SalaryFormController {
 
         String Salary_id = txtSalaryId.getText();
 
-        var salaryModel = new SalaryModel();
+
         try {
-            boolean isDeleted = salaryModel.deleteSalary(Salary_id);
+            boolean isDeleted = salaryBO.deleteSalary(Salary_id);
 
             if(isDeleted) {
                 tblsalary.refresh();
@@ -167,9 +171,9 @@ public class SalaryFormController {
 
         var dto = new SalaryDto(id, date, Amount, EmpId);
 
-        var model = new SalaryModel();
+
         try {
-            boolean isSaved = model.saveSalary(dto);
+            boolean isSaved = salaryBO.saveSalary(dto);
             if (isSaved) {
                 new Alert(Alert.AlertType.CONFIRMATION, "salary saved!").show();
                 clearFields();
@@ -192,7 +196,6 @@ public class SalaryFormController {
         txtSalaryDate.setValue(LocalDate.parse(tblsalary.getSelectionModel().getSelectedItem().getSalary_date()));
         txtSalaryAmount.setText(tblsalary.getSelectionModel().getSelectedItem().getSalaryAmount());
         txtEmpId.setText(tblsalary.getSelectionModel().getSelectedItem().getEmployee_id());
-
 
     }
 

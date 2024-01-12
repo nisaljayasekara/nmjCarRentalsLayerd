@@ -8,11 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import lk.nimsara.carRental.model.UserModel;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.EmployeeBO;
+import lk.nimsara.carRental.bo.custom.UserBO;
 import lk.nimsara.carRental.util.Navigation;
 import lk.nimsara.carRental.util.Utils;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginPageFormController {
 
@@ -22,9 +25,10 @@ public class LoginPageFormController {
     @FXML
     private TextField txtUserName;
 
+    UserBO userBO =(UserBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.USER);
    @FXML
-    void btnLoginOnAction(ActionEvent event) {
-       String userId = UserModel.verifyUser(txtUserName.getText(),txtPassword.getText());
+    void btnLoginOnAction(ActionEvent event) throws SQLException {
+       String userId = userBO.verifyUser(txtUserName.getText(),txtPassword.getText());
         if(userId != null){
             Utils.userId = userId;
             try {

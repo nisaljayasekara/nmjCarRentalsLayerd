@@ -9,9 +9,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lk.nimsara.carRental.bo.BOFactory;
+import lk.nimsara.carRental.bo.custom.CustomerBO;
+import lk.nimsara.carRental.bo.custom.StockBO;
 import lk.nimsara.carRental.dto.StockDto;
 import lk.nimsara.carRental.dto.tm.StockTm;
-import lk.nimsara.carRental.model.StockModel;
 import javafx.scene.input.MouseEvent;
 
 import java.sql.SQLException;
@@ -40,6 +42,8 @@ public class StockFromController {
     @FXML
     private TextField txtstock_id;
 
+    StockBO stockBO =(StockBO) BOFactory.getInstance().getBO(BOFactory.BOTypes.STOCK);
+
     public void initialize() {
         setCellValueFactory();
         loadAllStock();
@@ -54,12 +58,11 @@ public class StockFromController {
     }
     private void loadAllStock() {
 
-            var model = new StockModel();
 
             ObservableList<StockTm> obList = FXCollections.observableArrayList();
 
             try {
-                List<StockDto> dtoList = model.getAllStock();
+                List<StockDto> dtoList = stockBO.getAllStock();
 
                 for(StockDto dto : dtoList) {
                     obList.add(
@@ -88,10 +91,10 @@ public class StockFromController {
     void btnDeleteOnAction(ActionEvent event) {
         String stockId =txtstock_id.getText();
 
-        StockModel stockModel = new StockModel();
+
 
         try {
-            boolean isDeleted =stockModel.deleteStock(stockId);
+            boolean isDeleted =stockBO.deleteStock(stockId);
             if (isDeleted){
                 tblstock.refresh();
                 new Alert(Alert.AlertType.CONFIRMATION, "stock deleted!").show();
@@ -113,10 +116,10 @@ public class StockFromController {
 
         StockDto stockDto =new StockDto(stockId,description,qty);
 
-        StockModel stockModel = new StockModel();
+
 
         try {
-            boolean isSaved =stockModel.saveStock(stockDto);
+            boolean isSaved =stockBO.saveStock(stockDto);
             if (isSaved){
                 new Alert(Alert.AlertType.CONFIRMATION, "stock saved!").show();
                 loadAllStock();
@@ -138,10 +141,10 @@ public class StockFromController {
 
         StockDto stockDto = new StockDto(stockId,description,qty);
 
-        StockModel stockModel = new StockModel();
+
 
         try {
-            boolean isUpdated =stockModel.updateStock(stockDto);
+            boolean isUpdated =stockBO.updateStock(stockDto);
             if (isUpdated){
                 new Alert(Alert.AlertType.CONFIRMATION, "stock updated!").show();
                 loadAllStock();

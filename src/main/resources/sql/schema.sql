@@ -17,6 +17,7 @@ CREATE TABLE User(
                      User_password varchar(50)  not null,
                      User_email    varchar(100) not null,
                      Employee_id   varchar(20)  not null,
+                     type          text,
                      constraint foreign key (Employee_id) references Employee (Employee_id) on delete cascade on update cascade
 );
 
