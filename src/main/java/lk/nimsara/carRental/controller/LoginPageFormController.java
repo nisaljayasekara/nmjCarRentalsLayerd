@@ -37,6 +37,7 @@ public class LoginPageFormController {
                 throw new RuntimeException(e);
             }
         }
+
     }
 
     @FXML
